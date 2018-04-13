@@ -1,42 +1,37 @@
+Projectile = require "Projectile"
+
 -- Weapon
 local Weapon = {}
 Weapon.__index = Weapon;
 
-function Weapon:create(length, world, player)
-
+function Weapon:create(length, ship)
     local obj = Entity:create({
         name          = "Weapon",
-        parent        = player,
-        x             = player.x,
-        y             = player.y,
-        deg           = 90,
+        ship          = ship,
+        x             = ship.x,
+        y             = ship.y,
+        deg           = ship:getBody():getAngle(),
         length        = length,
         reload_time   = 0.3,
         reload_total  = 0.0,
-        loaded        = false,
+        loaded        = true,
         power         = 2000,
         power_max     = 2000
     })
-
-    obj.x2 = obj.x+obj.length
-    obj.y2 = obj.y
 
     obj.shots = Queue:create()
 
     setmetatable(obj, self)
 
     function obj:draw()
-
-        love.graphics.setColor(200, 120, 255)
-        love.graphics.line({
-            self.x, self.y,
-            self.x2, self.y2
-        })
-
         love.graphics.setColor(0, 255, 0)
-        love.graphics.circle("line", self.x, self.y, self.length, 100 )
+        love.graphics.circle("line", self.x, self.y, self.length, 16)
+
+--        love.graphics.setColor(200, 120, 255)
+--        love.graphics.line({self.x, self.y, self.x2, self.y2})
 
         colorDefaultApply()
+
         -- Shots
         for i,shot in pairs(self.shots) do
             if type(i) == "number" then
@@ -46,8 +41,10 @@ function Weapon:create(length, world, player)
     end
 
     function obj:update(dt, world)
-        self.x = self.parent.x
-        self.y = self.parent.y
+        self.x = self.ship.x
+        self.y = self.ship.y
+
+        self.deg = self.ship:getBody():getAngle()
 
         -- Shots
         for i,shot in pairs(self.shots) do
@@ -74,10 +71,9 @@ function Weapon:create(length, world, player)
         end
     end
 
-    function obj:fire(dt, world)
+    function obj:fire()
         if self.loaded then
-            local shot = Projectile:create(dt, world, self)
-            self.shots:push(shot)
+            self.shots:push(Projectile:create(self))
         end
 
         self.loaded = false
@@ -95,7 +91,6 @@ function Weapon:create(length, world, player)
     end
 
     function obj:clearShots()
-
         for i,shot in pairs(self.shots) do
             if type(i) == "number" then
                 shot:destroy()

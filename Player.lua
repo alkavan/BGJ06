@@ -1,3 +1,5 @@
+Ship = require "Ship"
+
 -- Player object
 local Player = {}
 Player.__index = Player
@@ -11,43 +13,14 @@ function Player:create(world)
         name          = "Player",
         x             = x,
         y             = y,
-        density       = 10*GM,
-        integrity     = 5000,
-        integrity_max = 8000,
-        integrity_cur = 5000,
-        score         = 0
+        score         = 0,
+        ship          = nil
     })
 
     setmetatable(obj, self)
 
-    -- Create body, shape and combine into fixture
-    local body    = love.physics.newBody(world, x, y, "dynamic")
-    local shape   = love.physics.newRectangleShape(32, 32)
-    local fixture = love.physics.newFixture(body, shape, obj.density)
-    
-    fixture:setUserData(obj)
-    fixture:setCategory(2)
-    fixture:setRestitution(0.8)
-    fixture:setFriction(1.0)
-
-    obj.fixture = fixture
-    obj:getBody():setFixedRotation(true)
-
-    -- Load ship image
-    obj.image  = love.graphics.newImage("asset/ship1.png")
-
-    -- Create animation properties
-    obj.frames    = Queue:create()
-    obj.quad      = nil
-    obj.quad_time = 0
-    obj.interval  = 0.1
-
-    -- Create sprite frames
-    obj.frames:push(love.graphics.newQuad(0, 0,   32, 32, obj.image:getWidth(), obj.image:getHeight()))
-    obj.frames:push(love.graphics.newQuad(0, 32,  32, 32, obj.image:getWidth(), obj.image:getHeight()))
-    obj.frames:push(love.graphics.newQuad(0, 64,  32, 32, obj.image:getWidth(), obj.image:getHeight()))
-    obj.frames:push(love.graphics.newQuad(0, 96,  32, 32, obj.image:getWidth(), obj.image:getHeight()))
-    obj.frames:push(love.graphics.newQuad(0, 128, 32, 32, obj.image:getWidth(), obj.image:getHeight()))
+    -- Create ship entity
+    obj.ship = Ship:create(world, obj)
 
     --
     -- Methods
@@ -56,53 +29,37 @@ function Player:create(world)
     -- On draw
     function obj:draw()
         colorDefaultApply()
-
-        love.graphics.draw(self.image, self.quad, self.x, self.y, self:getBody():getAngle(), 1, 1, 16, 16)
-
-        colorDefaultApply()
-        love.graphics.polygon("line", self:getBody():getWorldPoints(self:getShape():getPoints()))
+        self.ship:draw()
+        love.graphics.polygon("line", self.ship:getBody():getWorldPoints(self.ship:getShape():getPoints()))
     end
 
     -- On update
     function obj:update(dt, world, cam)
-        -- Update entity animation
-        local now = love.timer.getTime()
-
-        if (self.quad == nil) or (now - self.quad_time >= self.interval) then
-
-            if self.quad ~= nil then
-                self.frames:push(self.quad)    
-            end
-
-            self.quad_time = now
-            self.quad = self.frames:pop()
-        end
-
-        self.x, self.y = self:getBody():getWorldCenter()
+        self.x, self.y = self.ship:getBody():getWorldCenter()
 
         -- Get mouse position
         local mx, my = cam:mousepos()
-        local x, y  = self:getBody():getWorldCenter()
+        local x, y  = self.ship:getBody():getWorldCenter()
 
         local deltaX = mx - x
         local deltaY = my - y
         -- calculate the angle
 
-        d_radians = math.atan2(dt*deltaX/GM, dt*deltaY/GM)
-        d_degrees = (d_radians + math.pi) * 360.0 / (2.0 * math.pi);
-        d_degrees = 360 - d_degrees
+        local d_radians = math.atan2(dt*deltaX/GM, dt*deltaY/GM)
+        local d_degrees = (d_radians + math.pi) * 360.0 / (2.0 * math.pi);
 
         -- print("A: "..round(d_degrees, 1))
-        self:getBody():setAngle(math.rad(d_degrees))
+        self.ship:getBody():setAngle(math.rad(360 - d_degrees))
+        self.ship:update(dt, world)
     end
 
     function obj:moveToMouse(mx, my)
-        local tx, ty = self:getBody():getWorldCenter()
-        local angle = self:getBody():getAngle()
+        local tx, ty = self.ship:getBody():getWorldCenter()
+        local angle = self.ship:getBody():getAngle()
 
         local maxTorque = 1000*GM
-        local inertia = self:getBody():getInertia()
-        local w = self:getBody():getAngularVelocity()
+        local inertia = self.ship:getBody():getInertia()
+        local w = self.ship:getBody():getAngularVelocity()
         local targetAngle = math.atan2(ty-y,tx-x)
 
         -- distance I have to cover
@@ -121,7 +78,7 @@ function Player:create(world)
         end
         -- print("target/diff: "..targetAngle.."/"..differenceAngle)
         -- print("torque: "..torque)
-        self:getBody():applyTorque(torque)
+        self.ship:getBody():applyTorque(torque)
 
         local vx = mx-tx
         local vy = my-ty
@@ -131,7 +88,7 @@ function Player:create(world)
         local f1y = GM*vy/d12
         -- print("f1x, f1y: "..f1x..","..f1y)
 
-        self:getBody():applyForce(10000*f1x, 10000*f1y, mx, my)
+        self.ship:getBody():applyForce(10000*f1x, 10000*f1y, mx, my)
     end
 
     return obj

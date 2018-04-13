@@ -15,8 +15,6 @@ MainMenu = require "MainMenu"
 Stats      = require "Stats"
 Planet     = require "Planet"
 Player     = require "Player"
--- Weapon     = require "Weapon"
-Projectile = require "Projectile"
 
 -- Hump modules
 Camera = require "hump.camera"
@@ -37,13 +35,19 @@ Game.planets    = Queue:create()
 Game.player     = nil
 Game.mmenu      = nil
 Game.cam        = nil
+Game.music      = nil
 
 -- Game Init
 --
 function love.load()
 
+    -- Audio
+    local music = love.audio.newSource("asset/audio/lazerhawk-lnterstellar-EWHaG_uCvEA.mp3", "static")
+    music:play()
+    Game.music = music
+
     -- Set interface font
-    local main_font = love.graphics.newFont("Envy.ttf", 12)
+    local main_font = love.graphics.newFont("asset/font/Envy.ttf", 12)
     love.graphics.setFont(main_font)
     colorDefaultApply()
     
@@ -108,7 +112,7 @@ function love.draw()
     -- Draw player
     Game.player:draw()
     
-    local x,y = Game.player:getBody():getWorldCenter()
+    local x,y = Game.player.ship:getBody():getWorldCenter()
     local mx, my = Game.cam:mousepos()
     love.graphics.line(x, y, mx, my)
 
@@ -119,7 +123,7 @@ function love.draw()
     love.graphics.print("MOUSE -> ("..round(mx, 0)..","..round(my, 0)..") | GAME -> ("..Game.mouse_x..","..Game.mouse_y..")", 10, 10)
 
 
-    cx, cy = Game.cam:worldCoords(love.mouse.getPosition())
+    local cx, cy = Game.cam:worldCoords(love.mouse.getPosition())
     love.graphics.print("CAMERA -> W("..round(cx, 0)..","..round(cy, 0)..") | ("..Game.mouse_x..","..Game.mouse_y..")", 10, 22)
 
     -- Draw stats
@@ -148,11 +152,16 @@ function love.update(dt)
 end
 
 -- Mouse press event
-function love.mousepressed(x, y, button)
+function love.mousepressed(x, y, button, istouch)
+
+    Game.player.ship.weapon:aim(x, y)
+
     -- Left mouse button press
-    if button == 'l' then
+    if button == 1 then
         -- Fire
-    elseif button == 'r' then
+        Game.player.ship.weapon:fire()
+        print("fire")
+    elseif button == 2 then
         -- Other action
     end
 
