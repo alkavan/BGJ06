@@ -85,7 +85,7 @@ function love.load()
 
     Game.planets:push(Planet:create(Game.world, colorViolet(),    { x = -400, y = -400 }, Planet.TYPE_VIOLET))
        
-    love.keyboard.setKeyRepeat(0.01, 0.3)
+    love.keyboard.setKeyRepeat(true)
 end
 
 -- Main draw function

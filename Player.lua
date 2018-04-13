@@ -57,7 +57,7 @@ function Player:create(world)
     function obj:draw()
         colorDefaultApply()
 
-        love.graphics.drawq(self.image, self.quad, self.x, self.y, self:getBody():getAngle(), 1, 1, 0, 0)
+        love.graphics.draw(self.image, self.quad, self.x, self.y, self:getBody():getAngle(), 1, 1, 16, 16)
 
         colorDefaultApply()
         love.graphics.polygon("line", self:getBody():getWorldPoints(self:getShape():getPoints()))
