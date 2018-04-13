@@ -160,7 +160,6 @@ function love.mousepressed(x, y, button, istouch)
     if button == 1 then
         -- Fire
         Game.player.ship.weapon:fire()
-        print("fire")
     elseif button == 2 then
         -- Other action
     end
