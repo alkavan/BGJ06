@@ -57,7 +57,7 @@ function Player:create(world, position)
         local deltaY = my - sy
 
         -- Calculate the angle
-        local d_radians = math.atan2(dt*deltaX/GM, dt*deltaY/GM)
+        local d_radians = math.atan2(dt*deltaX, dt*deltaY)
         local d_degrees = (d_radians + math.pi) * 360.0 / (2.0 * math.pi);
 
         -- print("A: "..round(d_degrees, 1))

@@ -22,7 +22,6 @@ Camera = require "hump.camera"
 -- World constants { GM = gravity, GM = game multiplier }
 GY = 0
 GX = 0
-GM = 64
 
 -- Create game object
 Game = {}
@@ -37,43 +36,13 @@ Game.mmenu      = nil
 Game.cam        = nil
 Game.music      = nil
 
----
--- Game Init
--- Handles loading of all resources, setup world and objects
---
-function love.load()
-
-    -- Audio
-    local music = love.audio.newSource("asset/audio/lazerhawk-lnterstellar-EWHaG_uCvEA.mp3", "static")
---    music:play() -- TODO: fix music
-    Game.music = music
-
-    -- Set interface font
-    local main_font = love.graphics.newFont("asset/font/Envy.ttf", 12)
-    love.graphics.setFont(main_font)
-    colorDefaultApply()
-    
-    -- Set physics
-    love.physics.setMeter(GM)
-
-    -- Main menu
-    Game.mmenu = MainMenu:create(300,300,300,200,3)
-
-    -- Create game world
-    Game.world = love.physics.newWorld(GX, GY, true)
-    Game.world:setCallbacks(beginContact, endContact, preSolve, postSolve)
-
-    -- Create player entity
-    local player = Player:create(Game.world, {x = 0, y = 200})
-    Game.cam = Camera(player.position.x, player.position.y)
-    Game.player = player
-
+function Game:createPlanets()
     -- Create planets
     Game.planets:push(Planet:create(Game.world, colorRed(),    { x = 0,    y = -400 }, Planet.TYPE_RED))
     Game.planets:push(Planet:create(Game.world, colorRed(),    { x = 0,    y = 400  }, Planet.TYPE_RED))
     Game.planets:push(Planet:create(Game.world, colorRed(),    { x = 400,  y = 0    }, Planet.TYPE_RED))
     Game.planets:push(Planet:create(Game.world, colorRed(),    { x = -400, y = 0    }, Planet.TYPE_RED))
-    
+
     Game.planets:push(Planet:create(Game.world, colorOrange(),    { x = -400, y =  200  }, Planet.TYPE_ORANGE))
     Game.planets:push(Planet:create(Game.world, colorOrange(),    { x = -400, y = -200 }, Planet.TYPE_ORANGE))
     Game.planets:push(Planet:create(Game.world, colorOrange(),    { x =  400, y =  200  }, Planet.TYPE_ORANGE))
@@ -91,6 +60,38 @@ function love.load()
     Game.planets:push(Planet:create(Game.world, colorIndigo(),    { x = -400,  y = 400 }, Planet.TYPE_INDIGO))
 
     Game.planets:push(Planet:create(Game.world, colorViolet(),    { x = -400, y = -400 }, Planet.TYPE_VIOLET))
+end
+
+---
+-- Game Init
+-- Handles loading of all resources, setup world and objects
+--
+function love.load()
+
+    -- Audio
+    local music = love.audio.newSource("asset/audio/lazerhawk-lnterstellar-EWHaG_uCvEA.mp3", "static")
+--    music:play() -- TODO: fix music
+    Game.music = music
+
+    -- Set interface font
+    local main_font = love.graphics.newFont("asset/font/Envy.ttf", 12)
+    love.graphics.setFont(main_font)
+    colorDefaultApply()
+
+    -- Main menu
+    Game.mmenu = MainMenu:create(300,300,300,200,3)
+
+    -- Create game world
+    Game.world = love.physics.newWorld(GX, GY, true)
+    Game.world:setCallbacks(beginContact, endContact, preSolve, postSolve)
+
+    -- Create player entity
+    local player = Player:create(Game.world, {x = 0, y = 0})
+    Game.cam = Camera(player.position.x, player.position.y)
+    Game.player = player
+
+    -- Create planets
+    Game.createPlanets()
        
     love.keyboard.setKeyRepeat(true)
 end

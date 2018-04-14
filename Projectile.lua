@@ -73,7 +73,6 @@ function Projectile:create(weapon)
         -- TODO: think, wait, why ind in space? is this for something else?
         local x, y, mass, inertia = self.fixture:getMassData()
 --        print(angle, force, x, y, mass, inertia)
-        print(inertia)
 
         fx = self.vx * dt + 0.5 * ( ((force*math.sin( math.rad(angle) )) / mass ) - (GX) ) * math.pow(dt, 2)
         fy = self.vy * dt + 0.5 * ( ((force*math.cos( math.rad(angle) )) / mass ) - (GY) ) * math.pow(dt, 2)
