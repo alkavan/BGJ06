@@ -2,40 +2,30 @@
 local Stats = {}
 Stats.__index = Stats
 
-Stats.energy_red    = 0
-Stats.energy_orange = 0
-Stats.energy_yellow = 0
-Stats.energy_green  = 0
-Stats.energy_blue   = 0
-Stats.energy_indigo = 0
-Stats.energy_violet = 0
+function Stats:draw(players)
+    for k, player in pairs(players) do
+        local offset = 60
+        local line_space = 15
 
-function Stats:draw(player)
-    love.graphics.print("HP: "..player.ship.integrity.."/"..player.ship.integrity_cur, 10, 50)
-    love.graphics.print("SCORE: "..player.score, 10, 70)
+        local fields = {
+            PLAYER = player.name,
+            HP     = player.ship.integrity.."/"..player.ship.integrity_cur,
+            SCORE  = player.score
+        }
 
-    love.graphics.print("RED:    "..self.energy_red,    10, 100)
-    love.graphics.print("ORANGE: "..self.energy_orange, 10, 120)
-    love.graphics.print("YELLOW: "..self.energy_yellow, 10, 140)
-    love.graphics.print("GREEN:  "..self.energy_green,  10, 160)
-    love.graphics.print("BLUE:   "..self.energy_blue,   10, 180)
-    love.graphics.print("INDIGO: "..self.energy_indigo, 10, 200)
-    love.graphics.print("VIOLET: "..self.energy_violet, 10, 220)
+        local l = 1
+        local x = 10
+        for field, value in pairs(fields) do
+            love.graphics.print(field..": "..value, x, (offset*k)+(k+1)+line_space*(l))
+            l = l+1
+        end
+    end
 end
 
 function Stats:reset()
-	self.energy_red    = 0
-	self.energy_orange = 0
-	self.energy_yellow = 0
-	self.energy_green  = 0
-	self.energy_blue   = 0
-	self.energy_indigo = 0
-	self.energy_violet = 0
-
-	-- Reset player
-	Game.player.score = 0
-	Game.player.ship:getBody():setPosition(0,0)
-	Game.player.ship:getBody():setLinearVelocity(0, 0)
+    -- Reset player
+    Game.player.score    = 0
+    Game.ai_player.score = 0
 end
 
 return Stats

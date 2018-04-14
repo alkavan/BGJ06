@@ -4,11 +4,26 @@ Projectile = require "Projectile"
 local Weapon = {}
 Weapon.__index = Weapon;
 
+function drawAimHelper(x, y, length, angle, spread_deg)
+    love.graphics.setColor(255, 0, 0)
+
+    local length = length*1.25
+
+    local end_x = x + length * math.sin(angle+math.rad(spread_deg));
+    local end_y = y + length * -math.cos(angle+math.rad(spread_deg));
+    love.graphics.line(x, y, end_x, end_y)
+
+    end_x = x + length * math.sin(angle-math.rad(spread_deg));
+    end_y = y + length * -math.cos(angle-math.rad(spread_deg));
+    love.graphics.line(x, y, end_x, end_y)
+end
+
 function Weapon:create(length, ship)
     local obj = Entity:create({
         name          = "Weapon",
         ship          = ship,
-        deg           = ship:getBody():getAngle(),
+        angle         = ship:getBody():getAngle(),
+        deg           = math.deg(ship:getBody():getAngle()),
         length        = length,
         reload_time   = 0.3,
         reload_total  = 0.0,
@@ -33,7 +48,8 @@ function Weapon:create(length, ship)
         local sx, sy = self.ship:getPosition()
         self:setPosition(sx, sy)
 
-        self.deg = self.ship:getBody():getAngle()
+        self.angle = self.ship:getBody():getAngle()
+        self.deg   = math.deg(self.ship:getBody():getAngle())
 
         -- Shots
         for i,shot in pairs(self.shots) do
@@ -48,9 +64,11 @@ function Weapon:create(length, ship)
     --
     function obj:draw()
         love.graphics.setColor(0, 255, 0)
-
         local sx, sy = self.ship:getPosition();
+
         love.graphics.circle("line", sx, sy, self.length, 16)
+
+        drawAimHelper(sx, sy, self.length, self.angle, 8)
 
         colorDefaultApply()
 

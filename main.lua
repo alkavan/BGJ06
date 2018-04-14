@@ -15,6 +15,7 @@ MainMenu = require "MainMenu"
 Stats      = require "Stats"
 Planet     = require "Planet"
 Player     = require "Player"
+AiPlayer   = require "AiPlayer"
 
 -- Hump modules
 Camera = require "hump.camera"
@@ -32,6 +33,7 @@ Game.mouse_y    = 0
 Game.to_destory = Queue:create()
 Game.planets    = Queue:create()
 Game.player     = nil
+Game.ai_player  = nil
 Game.mmenu      = nil
 Game.cam        = nil
 Game.music      = nil
@@ -86,9 +88,13 @@ function love.load()
     Game.world:setCallbacks(beginContact, endContact, preSolve, postSolve)
 
     -- Create player entity
-    local player = Player:create(Game.world, {x = 0, y = 0})
-    Game.cam = Camera(player.position.x, player.position.y)
+    local player = Player:create(Game.world)
+    local px, py = player:getPosition()
+    Game.cam = Camera(px, py)
     Game.player = player
+
+    local ai_layer = AiPlayer:create(Game.world, {x = px - 100, y = py - 100})
+    Game.ai_player = ai_layer
 
     -- Create planets
     Game.createPlanets()
@@ -116,7 +122,11 @@ function love.draw()
 
     -- Draw player
     Game.player:draw()
-    
+
+    -- Draw AI Player
+    Game.ai_player:draw()
+
+    -- Draw mouse vector
     local x,y = Game.player.ship:getBody():getWorldCenter()
     local mx, my = Game.cam:mousepos()
     love.graphics.line(x, y, mx, my)
@@ -132,7 +142,7 @@ function love.draw()
     love.graphics.print("CAMERA -> W("..round(cx, 0)..","..round(cy, 0)..") | ("..Game.mouse_x..","..Game.mouse_y..")", 10, 22)
 
     -- Draw stats
-    Stats:draw(Game.player)
+    Stats:draw({Game.player, Game.ai_player})
 
     -- Draw game menu
     Game.mmenu:draw()
@@ -152,6 +162,7 @@ function love.update(dt)
 
     Game.world:update(dt)
     Game.player:update(dt, Game.world, Game.cam)
+    Game.ai_player:update(dt, Game.world)
 
     -- Update camera
     local dx = Game.player.position.x - Game.cam.x

@@ -1,5 +1,6 @@
 Explosion = require "Explosion"
 
+-- Projectile
 local Projectile = {}
 Projectile.__index = Projectile;
 
@@ -23,9 +24,12 @@ function Projectile:create(weapon)
     local shape   = love.physics.newRectangleShape(3, 3)
     local fixture = love.physics.newFixture(body, shape, 10)
 
+    local catagory   = weapon.ship.player.category
+    local p_catagory = weapon.ship.player.category-10
+
     fixture:setUserData(obj)
-    fixture:setCategory(4)
-    fixture:setMask(16)
+    fixture:setCategory(catagory)
+    fixture:setMask(catagory, p_catagory)
     fixture:setRestitution(0.1)
     fixture:setFriction(0.5)
 

@@ -28,8 +28,8 @@ function Ship:create(world, player)
     local fixture = love.physics.newFixture(body, shape, obj.density)
 
     fixture:setUserData(obj)
-    fixture:setCategory(16)
-    fixture:setMask(4)
+    fixture:setCategory(player.category)
+    fixture:setMask(player.category-10)
     fixture:setRestitution(0.3)
     fixture:setFriction(1.0)
 

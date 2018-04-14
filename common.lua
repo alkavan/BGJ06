@@ -150,13 +150,11 @@ function newAnimation(image, width, height, duration)
     function animation:update(dt)
 
         local duration = dt * self.duration
---        print(self.current_time, duration)
 
         self.current_time = self.current_time + dt
         if self.current_time >= duration then
             self.current_time = self.current_time - duration
 
---            print(self.current_index == self.sprite:getBufferSize())
             if(self.current_index == self.sprite:getBufferSize()) then
                 self.current_index = 1
                 return

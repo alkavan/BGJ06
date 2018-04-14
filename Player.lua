@@ -19,13 +19,14 @@ function Player:create(world, position)
         name          = "Player",
         position      = position,
         score         = 0,
-        ship          = nil
+        category      = 15,
+        ship          = nil,
     })
+
+    setmetatable(obj, self)
 
     -- Create ship entity
     obj.ship = Ship:create(world, obj)
-
-    setmetatable(obj, self)
 
     ---
     -- Draw
