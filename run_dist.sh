@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-love beware-space.love
+love dist/beware-space.love
