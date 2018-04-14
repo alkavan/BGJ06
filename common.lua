@@ -115,26 +115,25 @@ end
 --
 function newAnimation(image, width, height, duration)
     local animation = {}
+
     animation.spriteSheet = image;
     animation.quads = {};
 
-    local size = {
-        w = image:getWidth(),
-        h = image:getHeight()
-    }
+    local image_w = image:getWidth()
+    local image_h = image:getHeight()
 
-    local oriantation = size.h / size.w
+    local oriantation = image_h / image_w
 
     if oriantation < 1 then
-        for x = 0, size.w - width, width do
-            for y = 0, size.h - height, height do
-                table.insert(animation.quads, love.graphics.newQuad(x, y, width, height, size.w, size.h))
+        for x = 0, image_w - width, width do
+            for y = 0, image_h - height, height do
+                table.insert(animation.quads, love.graphics.newQuad(x, y, width, height, image_w, image_h))
             end
         end
     else
-        for y = 0, size.h - height, height do
-            for x = 0, size.w - width, width do
-                table.insert(animation.quads, love.graphics.newQuad(x, y, width, height, size.w, size.h))
+        for y = 0, image_h - height, height do
+            for x = 0, image_w - width, width do
+                table.insert(animation.quads, love.graphics.newQuad(x, y, width, height, image_w, image_h))
             end
         end
     end
