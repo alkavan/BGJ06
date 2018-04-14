@@ -1,4 +1,4 @@
-Projectile = require "Projectile"
+Projectile = require "game/Projectile"
 
 -- Weapon
 local Weapon = {}

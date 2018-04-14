@@ -3,19 +3,19 @@ require "common"
 require "collusion"
 
 -- Load game common modules
-Queue  = require "Queue"
-Object = require "Object"
-Entity = require "Entity"
+Queue  = require "game/Queue"
+Object = require "game/Object"
+Entity = require "game/Entity"
 
 -- Gui
-GuiFrame = require "GuiFrame"
-MainMenu = require "MainMenu"
+GuiFrame = require "game/GuiFrame"
+MainMenu = require "game/MainMenu"
 
 -- Game specific section
-Stats      = require "Stats"
-Planet     = require "Planet"
-Player     = require "Player"
-AiPlayer   = require "AiPlayer"
+Stats      = require "game/Stats"
+Planet     = require "game/Planet"
+Player     = require "game/Player"
+AiPlayer   = require "game/AiPlayer"
 
 -- Hump modules
 Camera = require "hump.camera"

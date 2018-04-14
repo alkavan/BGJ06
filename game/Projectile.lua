@@ -1,4 +1,4 @@
-Explosion = require "Explosion"
+Explosion = require "game/Explosion"
 
 -- Projectile
 local Projectile = {}

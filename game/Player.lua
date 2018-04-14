@@ -1,4 +1,4 @@
-Ship = require "Ship"
+Ship = require "game/Ship"
 
 -- Player object
 local Player = {}
