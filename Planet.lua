@@ -38,7 +38,8 @@ function Planet:create(world, color, position, energy_type)
     local fixture = love.physics.newFixture(body, shape, 100)
     
     fixture:setUserData(obj)
-    fixture:setFriction(0.8)
+    fixture:setFriction(1.2)
+    fixture:setRestitution(0.03)
     fixture:setCategory(1)
 
     obj.fixture = fixture

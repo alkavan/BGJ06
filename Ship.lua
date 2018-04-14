@@ -23,12 +23,12 @@ function Ship:create(world, player)
 
     -- Create body, shape and combine into fixture
     local body    = love.physics.newBody(world, px, py, "dynamic")
-    local shape   = love.physics.newRectangleShape(32, 32)
+    local shape   = love.physics.newCircleShape(16)
     local fixture = love.physics.newFixture(body, shape, obj.density)
 
     fixture:setUserData(obj)
     fixture:setCategory(2)
-    fixture:setRestitution(0.8)
+    fixture:setRestitution(0.3)
     fixture:setFriction(1.0)
 
     obj.fixture = fixture

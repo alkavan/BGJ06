@@ -24,6 +24,28 @@ function Weapon:create(length, ship)
 
     setmetatable(obj, self)
 
+    ---
+    -- Update
+    -- @param dt
+    -- @param world
+    --
+    function obj:update(dt, world)
+        local sx, sy = self.ship:getPosition()
+        self:setPosition(sx, sy)
+
+        self.deg = self.ship:getBody():getAngle()
+
+        -- Shots
+        for i,shot in pairs(self.shots) do
+            if type(i) == "number" then
+                shot:update(dt, world)
+            end
+        end
+    end
+
+    ---
+    -- Draw
+    --
     function obj:draw()
         love.graphics.setColor(0, 255, 0)
 
@@ -36,20 +58,6 @@ function Weapon:create(length, ship)
         for i,shot in pairs(self.shots) do
             if type(i) == "number" then
                 shot:draw()
-            end
-        end
-    end
-
-    function obj:update(dt, world)
-        local sx, sy = self.ship:getPosition()
-        self:setPosition(sx, sy)
-
-        self.deg = self.ship:getBody():getAngle()
-
-        -- Shots
-        for i,shot in pairs(self.shots) do
-            if type(i) == "number" then
-                shot:update(dt, world)
             end
         end
     end

@@ -31,9 +31,12 @@ function Player:create(world, position)
     -- Draw
     --
     function obj:draw()
-        colorDefaultApply()
         self.ship:draw()
-        love.graphics.polygon("line", self.ship:getBody():getWorldPoints(self.ship:getShape():getPoints()))
+
+        local x, y = self:getPosition()
+        love.graphics.setColor(0, 255, 0)
+        love.graphics.circle("line", x, y, 16, 16)
+        colorDefaultApply()
     end
 
     ---
