@@ -39,7 +39,7 @@ function Explosion:create(projectile)
     function obj:draw()
         colorDefaultApply()
         local ex, ey = self:getPosition()
-        self.sprite:draw(ex, ey, self.projectile:getBody():getAngle(), 18.5)
+        self.sprite:draw(ex, ey, self.projectile:getBody():getAngle())
     end
 
     ---

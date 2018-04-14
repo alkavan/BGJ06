@@ -40,6 +40,7 @@ function Ship:create(world, player)
     -- Create animation properties
     obj.sprite = newAnimation(obj.image, 32, 32)
 
+
     -- Ship weapon
     obj.weapon = Weapon:create(16, obj)
 
@@ -49,7 +50,7 @@ function Ship:create(world, player)
     function obj:draw()
         colorDefaultApply()
         local x, y = self:getPosition()
-        self.sprite:draw(x, y, self:getBody():getAngle(), 16)
+        self.sprite:draw(x, y, self:getBody():getAngle())
         self.weapon:draw()
     end
 

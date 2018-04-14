@@ -114,43 +114,70 @@ end
 -- @param duration
 --
 function newAnimation(image, width, height, duration)
-    local animation = {}
 
-    animation.spriteSheet = image;
-    animation.quads = {};
+    local animation = {
+        current_index = 1
+    }
+
+    local index = {}
+
+--    animation.spriteSheet = image;
+--    animation.quads = {};
 
     local image_w = image:getWidth()
     local image_h = image:getHeight()
 
     local oriantation = image_h / image_w
 
+    local sprite = love.graphics.newSpriteBatch(image, 1)
+
     if oriantation < 1 then
         for x = 0, image_w - width, width do
             for y = 0, image_h - height, height do
-                table.insert(animation.quads, love.graphics.newQuad(x, y, width, height, image_w, image_h))
+                local id = sprite:add(love.graphics.newQuad(x, y, width, height, image_w, image_h))
+                index[id-1] = id
             end
         end
     else
         for y = 0, image_h - height, height do
             for x = 0, image_w - width, width do
-                table.insert(animation.quads, love.graphics.newQuad(x, y, width, height, image_w, image_h))
+                local id = sprite:add(love.graphics.newQuad(x, y, width, height, image_w, image_h))
+                index[id-1] = id
             end
         end
     end
 
-    animation.duration = duration or 1
+    animation.sprite      = sprite
+    animation.duration    = duration or 1
     animation.currentTime = 0
 
     function animation:update(dt)
-        self.currentTime = self.currentTime + dt
-        if self.currentTime >= self.duration then
-            self.currentTime = self.currentTime - self.duration
+        self.currentTime = self.currentTime + dt * self.duration
+        if self.currentTime >= dt then
+            self.currentTime = self.currentTime - dt * self.duration
+
+            if(self.current_index == self.sprite:getBufferSize()) then
+                self.current_index = 1
+                return
+            end
+
+            self.current_index = self.current_index + 1
         end
     end
 
-    function animation:draw(x, y, angel, size)
-        local spriteNum = math.floor(self.currentTime / self.duration * #self.quads) + 1
-        love.graphics.draw(self.spriteSheet, self.quads[spriteNum], x, y, angel, 1, 1, size, size)
+    function animation:getSize()
+        if oriantation < 1
+        then return width
+        else return height end
+    end
+
+    function animation:draw(x, y, angel)
+        local size = height
+        if oriantation < 1
+        then size = width end
+
+        self.sprite:setDrawRange(self.current_index, 1)
+        love.graphics.draw(self.sprite, x, y, angel, 1, 1, size/2, size/2)
     end
 
     return animation

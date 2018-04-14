@@ -74,7 +74,9 @@ function Projectile:create(weapon)
     function obj:draw()
         colorDefaultApply()
         local x, y = self:getPosition()
-        self.sprite:draw(x, y, self:getBody():getAngle(), 1.5)
+
+        self.sprite:draw(x, y, self:getBody():getAngle())
+
         if self.explosion ~= nil then
             self.explosion:draw()
         end
