@@ -116,20 +116,18 @@ end
 function newAnimation(image, width, height, duration)
 
     local animation = {
-        current_index = 1
+        current_index = 1,
+        duration      = duration or 1,
+        current_time  = 0
     }
 
-    local index = {}
-
---    animation.spriteSheet = image;
---    animation.quads = {};
+    local sprite = love.graphics.newSpriteBatch(image, 1)
 
     local image_w = image:getWidth()
     local image_h = image:getHeight()
 
     local oriantation = image_h / image_w
-
-    local sprite = love.graphics.newSpriteBatch(image, 1)
+    local index = {}
 
     if oriantation < 1 then
         for x = 0, image_w - width, width do
@@ -147,15 +145,18 @@ function newAnimation(image, width, height, duration)
         end
     end
 
-    animation.sprite      = sprite
-    animation.duration    = duration or 1
-    animation.currentTime = 0
+    animation.sprite = sprite
 
     function animation:update(dt)
-        self.currentTime = self.currentTime + dt * self.duration
-        if self.currentTime >= dt then
-            self.currentTime = self.currentTime - dt * self.duration
 
+        local duration = dt * self.duration
+--        print(self.current_time, duration)
+
+        self.current_time = self.current_time + dt
+        if self.current_time >= duration then
+            self.current_time = self.current_time - duration
+
+--            print(self.current_index == self.sprite:getBufferSize())
             if(self.current_index == self.sprite:getBufferSize()) then
                 self.current_index = 1
                 return

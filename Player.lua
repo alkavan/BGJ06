@@ -75,7 +75,6 @@ function Player:create(world, position)
         local tx, ty = self.ship:getBody():getWorldCenter()
         local angle  = self.ship:getBody():getAngle()
 
-        local maxTorque = 1000*GM
         local inertia = self.ship:getBody():getInertia()
         local w = self.ship:getBody():getAngularVelocity()
         local targetAngle = math.atan2(ty-py,tx-px)
@@ -84,9 +83,9 @@ function Player:create(world, position)
         local differenceAngle = math.normalizeAngle(targetAngle - angle)
 
         -- distance it will take me to stop
-        local brakingAngle = math.normalizeAngle(math.sign(w)*2.0*w*w*inertia/maxTorque)
+        local brakingAngle = math.normalizeAngle(math.sign(w)*2.0*w*w*inertia/self.ship.max_torque)
 
-        local torque = maxTorque
+        local torque = self.ship.max_torque
 
         -- two of these 3 conditions must be true
         local a,b,c = differenceAngle > math.pi, brakingAngle > differenceAngle, w > 0
@@ -94,19 +93,17 @@ function Player:create(world, position)
         if( (a and b) or (a and c) or (b and c) ) then
             torque = -torque
         end
-        -- print("target/diff: "..targetAngle.."/"..differenceAngle)
-        -- print("torque: "..torque)
+
         self.ship:getBody():applyTorque(torque)
 
         local vx = mx-tx
         local vy = my-ty
 
         local d12 = math.sqrt(vx^2 + vy^2)
-        local f1x = GM*vx/d12
-        local f1y = GM*vy/d12
-        -- print("f1x, f1y: "..f1x..","..f1y)
+        local f1x = self.ship.max_torque*vx/d12
+        local f1y = self.ship.max_torque*vy/d12
 
-        self.ship:getBody():applyForce(10000*f1x, 10000*f1y, mx, my)
+        self.ship:getBody():applyForce(f1x, f1y, mx, my)
     end
 
     return obj

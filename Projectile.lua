@@ -10,8 +10,8 @@ function Projectile:create(weapon)
         name     = "Projectile",
         weapon   = weapon,
         speed    = 1,
-        vx       = 1200,
-        vy       = 1200,
+        vx       = 600,
+        vy       = 600,
         collided = false
     })
 
@@ -24,7 +24,8 @@ function Projectile:create(weapon)
     local fixture = love.physics.newFixture(body, shape, 10)
 
     fixture:setUserData(obj)
-    fixture:setCategory(3)
+    fixture:setCategory(4)
+    fixture:setMask(16)
     fixture:setRestitution(0.1)
     fixture:setFriction(0.5)
 
@@ -34,7 +35,7 @@ function Projectile:create(weapon)
     obj.image  = love.graphics.newImage("asset/projectile1.png")
 
     -- Create animation properties
-    obj.sprite = newAnimation(obj.image, 3, 3)
+    obj.sprite = newAnimation(obj.image, 3, 3, 9.0)
 
     setmetatable(obj, self)
 
@@ -59,10 +60,25 @@ function Projectile:create(weapon)
         self:setPosition(bx, by)
 
         -- TODO: use this for draw
-        local dist_from_gun = distance(
-            bx, by,
-            self.weapon.ship:getBody():getX(), self.weapon.ship:getBody():getY()
-        )
+--        local dist_from_gun = distance(
+--            bx, by,
+--            self.weapon.ship:getBody():getX(), self.weapon.ship:getBody():getY()
+--        )
+
+        local angle = self:getBody():getAngle()
+        local force = self.weapon.power
+
+        local fx, fy
+        -- TODO: create wind factor for fx (like GV*GM instead of 0)
+        -- TODO: think, wait, why ind in space? is this for something else?
+        local x, y, mass, inertia = self.fixture:getMassData()
+--        print(angle, force, x, y, mass, inertia)
+        print(inertia)
+
+        fx = self.vx * dt + 0.5 * ( ((force*math.sin( math.rad(angle) )) / mass ) - (GX) ) * math.pow(dt, 2)
+        fy = self.vy * dt + 0.5 * ( ((force*math.cos( math.rad(angle) )) / mass ) - (GY) ) * math.pow(dt, 2)
+
+        self:getBody():applyForce(fx, fy)
 
         -- Update entity animation
         self.sprite:update(dt)
@@ -88,21 +104,6 @@ function Projectile:create(weapon)
     function obj:destroy()
         self:getBody():destroy()
     end
-
---    local angle = obj.parent.deg
---    local force = obj.parent.power*GM
-
---    local fx, fy
-    -- TODO: create wind factor for fx (like GV*GM instead of 0)
-    -- TODO: think, wait, why ind in space? is this for something else?
---    local x, y, mass, inertia = obj.fixture:getMassData()
-
-    -- TODO: debug mode
---    print("x: "..x.." y: "..y.." mass: "..mass.." inertia: "..inertia)
---    fx = obj.vx * dt + 0.5 * ( ((force*math.sin( math.rad(angle) )) / mass ) - (GX*GM) ) * math.pow(dt, 2)
---    fy = obj.vy * dt + 0.5 * ( ((force*math.cos( math.rad(angle) )) / mass ) - (GY*GM) ) * math.pow(dt, 2)
---
---    obj:getBody():applyForce(fx, fy)
 
     return obj
 end

@@ -14,7 +14,7 @@ function Weapon:create(length, ship)
         reload_total  = 0.0,
         loaded        = true,
         power         = 2000,
-        power_max     = 2000
+        power_max     = 6000
     })
 
     obj.shots = Queue:create()

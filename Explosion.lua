@@ -21,7 +21,7 @@ function Explosion:create(projectile)
     obj.image = love.graphics.newImage("asset/explosion1.png")
 
     -- Create animation properties
-    obj.sprite = newAnimation(obj.image, 37, 37)
+    obj.sprite = newAnimation(obj.image, 37, 37, 1.5)
 
     setmetatable(obj, self)
 

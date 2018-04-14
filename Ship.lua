@@ -8,10 +8,11 @@ function Ship:create(world, player)
     local obj = Entity:create({
         name          = "Ship",
         player        = player,
-        density       = 10*GM,
+        density       = 10,
         integrity     = 5000,
         integrity_max = 8000,
         integrity_cur = 5000,
+        max_torque    = 1000,
         weapon        = nil
     })
 
@@ -27,7 +28,8 @@ function Ship:create(world, player)
     local fixture = love.physics.newFixture(body, shape, obj.density)
 
     fixture:setUserData(obj)
-    fixture:setCategory(2)
+    fixture:setCategory(16)
+    fixture:setMask(4)
     fixture:setRestitution(0.3)
     fixture:setFriction(1.0)
 
@@ -38,8 +40,7 @@ function Ship:create(world, player)
     obj.image  = love.graphics.newImage("asset/ship1.png")
 
     -- Create animation properties
-    obj.sprite = newAnimation(obj.image, 32, 32)
-
+    obj.sprite = newAnimation(obj.image, 32, 32, 3.0)
 
     -- Ship weapon
     obj.weapon = Weapon:create(16, obj)
