@@ -37,13 +37,15 @@ Game.mmenu      = nil
 Game.cam        = nil
 Game.music      = nil
 
+---
 -- Game Init
+-- Handles loading of all resources, setup world and objects
 --
 function love.load()
 
     -- Audio
     local music = love.audio.newSource("asset/audio/lazerhawk-lnterstellar-EWHaG_uCvEA.mp3", "static")
-    music:play()
+--    music:play() -- TODO: fix music
     Game.music = music
 
     -- Set interface font
@@ -62,28 +64,29 @@ function love.load()
     Game.world:setCallbacks(beginContact, endContact, preSolve, postSolve)
 
     -- Create player entity
-    Game.player = Player:create(Game.world)
-    Game.cam = Camera(Game.player.x, Game.player.y)
+    local player = Player:create(Game.world, {x = 0, y = 200})
+    Game.cam = Camera(player.position.x, player.position.y)
+    Game.player = player
 
-    -- Create planet
+    -- Create planets
     Game.planets:push(Planet:create(Game.world, colorRed(),    { x = 0,    y = -400 }, Planet.TYPE_RED))
     Game.planets:push(Planet:create(Game.world, colorRed(),    { x = 0,    y = 400  }, Planet.TYPE_RED))
     Game.planets:push(Planet:create(Game.world, colorRed(),    { x = 400,  y = 0    }, Planet.TYPE_RED))
     Game.planets:push(Planet:create(Game.world, colorRed(),    { x = -400, y = 0    }, Planet.TYPE_RED))
     
-    Game.planets:push(Planet:create(Game.world, colorOrange(),    { x = -400, y = 200  }, Planet.TYPE_ORANGE))
+    Game.planets:push(Planet:create(Game.world, colorOrange(),    { x = -400, y =  200  }, Planet.TYPE_ORANGE))
     Game.planets:push(Planet:create(Game.world, colorOrange(),    { x = -400, y = -200 }, Planet.TYPE_ORANGE))
-    Game.planets:push(Planet:create(Game.world, colorOrange(),    { x = 400,  y = 200  }, Planet.TYPE_ORANGE))
-    Game.planets:push(Planet:create(Game.world, colorOrange(),    { x = 400,  y = -200 }, Planet.TYPE_ORANGE))
+    Game.planets:push(Planet:create(Game.world, colorOrange(),    { x =  400, y =  200  }, Planet.TYPE_ORANGE))
+    Game.planets:push(Planet:create(Game.world, colorOrange(),    { x =  400, y = -200 }, Planet.TYPE_ORANGE))
 
-    Game.planets:push(Planet:create(Game.world, colorYellow(),    { x = 200,  y = -400 }, Planet.TYPE_YELLOW))
+    Game.planets:push(Planet:create(Game.world, colorYellow(),    { x =  200, y = -400 }, Planet.TYPE_YELLOW))
     Game.planets:push(Planet:create(Game.world, colorYellow(),    { x = -200, y = -400 }, Planet.TYPE_YELLOW))
 
-    Game.planets:push(Planet:create(Game.world, colorGreen(),    { x = 200,  y = 400 }, Planet.TYPE_GREEN))
+    Game.planets:push(Planet:create(Game.world, colorGreen(),    { x =  200, y = 400 }, Planet.TYPE_GREEN))
     Game.planets:push(Planet:create(Game.world, colorGreen(),    { x = -200, y = 400 }, Planet.TYPE_GREEN))
 
-    Game.planets:push(Planet:create(Game.world, colorBlue(),    { x = 400,  y = -400 }, Planet.TYPE_BLUE))
-    Game.planets:push(Planet:create(Game.world, colorBlue(),    { x = 400, y = 400 }, Planet.TYPE_BLUE))
+    Game.planets:push(Planet:create(Game.world, colorBlue(),    { x = 400, y = -400 }, Planet.TYPE_BLUE))
+    Game.planets:push(Planet:create(Game.world, colorBlue(),    { x = 400, y =  400 }, Planet.TYPE_BLUE))
 
     Game.planets:push(Planet:create(Game.world, colorIndigo(),    { x = -400,  y = 400 }, Planet.TYPE_INDIGO))
 
@@ -92,6 +95,7 @@ function love.load()
     love.keyboard.setKeyRepeat(true)
 end
 
+---
 -- Main draw function
 --
 function love.draw()
@@ -133,9 +137,11 @@ function love.draw()
     Game.mmenu:draw()
 end
 
+---
 -- Game update
+-- @param dt
+--
 function love.update(dt)
-
     -- Update planets
     for i,planet in pairs(Game.planets) do
         if type(i) == "number" then
@@ -147,13 +153,20 @@ function love.update(dt)
     Game.player:update(dt, Game.world, Game.cam)
 
     -- Update camera
-    local dx,dy = Game.player.x - Game.cam.x, Game.player.y - Game.cam.y
+    local dx = Game.player.position.x - Game.cam.x
+    local dy = Game.player.position.y - Game.cam.y
+
     Game.cam:move(dx/2, dy/2)
 end
 
+---
 -- Mouse press event
+-- @param x
+-- @param y
+-- @param button
+-- @param istouch
+--
 function love.mousepressed(x, y, button, istouch)
-
     Game.player.ship.weapon:aim(x, y)
 
     -- Left mouse button press
@@ -168,15 +181,17 @@ function love.mousepressed(x, y, button, istouch)
     Game.mouse_y = y
 end
 
+---
 -- Keyboard press event
--- @param unicode integer representation
+-- @param key
+-- @param unicode Integer representation
+--
 function love.keypressed(key, unicode)
 
     if key == 'w' then
         local mx, my = Game.cam:mousepos()
         Game.player:moveToMouse(mx, my)
     elseif key == 'escape' then
-        print(key)
         Game.mmenu:toggle()
     elseif key == 'up' then
         Game.mmenu:moveUp()
@@ -187,7 +202,9 @@ function love.keypressed(key, unicode)
     end
 end
 
+---
 -- Quit
+--
 function love.quit()
     print("Thanks for playing! Come back soon!")
 end

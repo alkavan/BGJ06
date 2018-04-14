@@ -1,10 +1,10 @@
 function love.conf(t)
-    t.title = "BGM 06 R0.1" -- The title of the window the game is in (string)
+    t.title = "Beware Space 1.0-alpha" -- The title of the window the game is in (string)
     t.author = "Igal Alkon"     -- The author of the game (string)
     t.url = nil                 -- The website of the game (string)
     t.identity = nil            -- The name of the save directory (string)
-    t.version = "11.0"         -- The LÖVE version this game was made for (string)
-    t.console = false            -- Attach a console (boolean, Windows only)
+    t.version = "11.0"          -- The LÖVE version this game was made for (string)
+    t.console = false           -- Attach a console (boolean, Windows only)
     t.release = false           -- Enable release mode (boolean)
     
     t.window.width = 1024       -- The window width (number)

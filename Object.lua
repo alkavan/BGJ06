@@ -3,10 +3,10 @@
 local Object = {}
 
 function Object:create(obj)
-	local obj = obj or {}
-	setmetatable(obj, self)
+    local obj = obj or {}
+    setmetatable(obj, self)
     self.__index = self
-	return obj
+    return obj
 end
 
 return Object

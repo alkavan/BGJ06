@@ -8,8 +8,6 @@ function Weapon:create(length, ship)
     local obj = Entity:create({
         name          = "Weapon",
         ship          = ship,
-        x             = ship.x,
-        y             = ship.y,
         deg           = ship:getBody():getAngle(),
         length        = length,
         reload_time   = 0.3,
@@ -21,14 +19,16 @@ function Weapon:create(length, ship)
 
     obj.shots = Queue:create()
 
+    local sx, sy = ship:getPosition()
+    obj:setPosition(sx, sy)
+
     setmetatable(obj, self)
 
     function obj:draw()
         love.graphics.setColor(0, 255, 0)
-        love.graphics.circle("line", self.x, self.y, self.length, 16)
 
---        love.graphics.setColor(200, 120, 255)
---        love.graphics.line({self.x, self.y, self.x2, self.y2})
+        local sx, sy = self.ship:getPosition();
+        love.graphics.circle("line", sx, sy, self.length, 16)
 
         colorDefaultApply()
 
@@ -41,8 +41,8 @@ function Weapon:create(length, ship)
     end
 
     function obj:update(dt, world)
-        self.x = self.ship.x
-        self.y = self.ship.y
+        local sx, sy = self.ship:getPosition()
+        self:setPosition(sx, sy)
 
         self.deg = self.ship:getBody():getAngle()
 

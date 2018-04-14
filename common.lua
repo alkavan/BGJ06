@@ -105,3 +105,54 @@ end
 function colorViolet(alpha)
     return {r=143, g=0, b=255, a=alpha}
 end
+
+---
+-- New sprite animation
+-- @param image
+-- @param width
+-- @param height
+-- @param duration
+--
+function newAnimation(image, width, height, duration)
+    local animation = {}
+    animation.spriteSheet = image;
+    animation.quads = {};
+
+    local size = {
+        w = image:getWidth(),
+        h = image:getHeight()
+    }
+
+    local oriantation = size.h / size.w
+
+    if oriantation < 1 then
+        for x = 0, size.w - width, width do
+            for y = 0, size.h - height, height do
+                table.insert(animation.quads, love.graphics.newQuad(x, y, width, height, size.w, size.h))
+            end
+        end
+    else
+        for y = 0, size.h - height, height do
+            for x = 0, size.w - width, width do
+                table.insert(animation.quads, love.graphics.newQuad(x, y, width, height, size.w, size.h))
+            end
+        end
+    end
+
+    animation.duration = duration or 1
+    animation.currentTime = 0
+
+    function animation:update(dt)
+        self.currentTime = self.currentTime + dt
+        if self.currentTime >= self.duration then
+            self.currentTime = self.currentTime - self.duration
+        end
+    end
+
+    function animation:draw(x, y, angel, size)
+        local spriteNum = math.floor(self.currentTime / self.duration * #self.quads) + 1
+        love.graphics.draw(self.spriteSheet, self.quads[spriteNum], x, y, angel, 1, 1, size, size)
+    end
+
+    return animation
+end

@@ -4,47 +4,56 @@ Ship = require "Ship"
 local Player = {}
 Player.__index = Player
 
-function Player:create(world)
+---
+-- Create new player object
+-- @param world
+-- @param position
+--
+function Player:create(world, position)
 
-    local x = 500
-    local y = 300
+    if position == nil then
+        position = {x = 0, y = 0 }
+    end
 
     local obj = Entity:create({
         name          = "Player",
-        x             = x,
-        y             = y,
+        position      = position,
         score         = 0,
         ship          = nil
     })
 
-    setmetatable(obj, self)
-
     -- Create ship entity
     obj.ship = Ship:create(world, obj)
 
-    --
-    -- Methods
-    --    
+    setmetatable(obj, self)
 
-    -- On draw
+    ---
+    -- Draw
+    --
     function obj:draw()
         colorDefaultApply()
         self.ship:draw()
         love.graphics.polygon("line", self.ship:getBody():getWorldPoints(self.ship:getShape():getPoints()))
     end
 
-    -- On update
+    ---
+    -- Update
+    -- @param dt
+    -- @param world
+    -- @param cam
+    --
     function obj:update(dt, world, cam)
-        self.x, self.y = self.ship:getBody():getWorldCenter()
+
+        local sx, sy = self.ship:getBody():getWorldCenter()
+        self:setPosition(sx, sy)
 
         -- Get mouse position
         local mx, my = cam:mousepos()
-        local x, y  = self.ship:getBody():getWorldCenter()
 
-        local deltaX = mx - x
-        local deltaY = my - y
-        -- calculate the angle
+        local deltaX = mx - sx
+        local deltaY = my - sy
 
+        -- Calculate the angle
         local d_radians = math.atan2(dt*deltaX/GM, dt*deltaY/GM)
         local d_degrees = (d_radians + math.pi) * 360.0 / (2.0 * math.pi);
 
@@ -53,14 +62,20 @@ function Player:create(world)
         self.ship:update(dt, world)
     end
 
+    ---
+    -- Move player ship to mouse position
+    -- @param mx
+    -- @param my
+    --
     function obj:moveToMouse(mx, my)
+        local px, py = self:getPosition()
         local tx, ty = self.ship:getBody():getWorldCenter()
-        local angle = self.ship:getBody():getAngle()
+        local angle  = self.ship:getBody():getAngle()
 
         local maxTorque = 1000*GM
         local inertia = self.ship:getBody():getInertia()
         local w = self.ship:getBody():getAngularVelocity()
-        local targetAngle = math.atan2(ty-y,tx-x)
+        local targetAngle = math.atan2(ty-py,tx-px)
 
         -- distance I have to cover
         local differenceAngle = math.normalizeAngle(targetAngle - angle)
