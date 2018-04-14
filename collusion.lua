@@ -28,7 +28,7 @@ function beginContact(a, b, coll)
         end
     end
 
-    if entity_a.name == "Projectile" then
+    if entity_a.name == "Projectile" and entity_b.name ~= "Ship" then
         entity_a.collided = true
     end
 
