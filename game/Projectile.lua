@@ -11,8 +11,8 @@ function Projectile:create(weapon)
         name     = "Projectile",
         weapon   = weapon,
         speed    = 1,
-        vx       = 600,
-        vy       = 600,
+        vx       = 100,
+        vy       = 100,
         collided = false
     })
 
@@ -26,6 +26,9 @@ function Projectile:create(weapon)
 
     local catagory   = weapon.ship.player.category
     local p_catagory = weapon.ship.player.category-10
+
+    print(weapon.angle)
+    body:setAngle(weapon.angle)
 
     fixture:setUserData(obj)
     fixture:setCategory(catagory)
@@ -73,13 +76,11 @@ function Projectile:create(weapon)
         local force = self.weapon.power
 
         local fx, fy
-        -- TODO: create wind factor for fx (like GV*GM instead of 0)
-        -- TODO: think, wait, why ind in space? is this for something else?
         local x, y, mass, inertia = self.fixture:getMassData()
 --        print(angle, force, x, y, mass, inertia)
 
-        fx = self.vx * dt + 0.5 * ( ((force*math.sin( math.rad(angle) )) / mass ) - (GX) ) * math.pow(dt, 2)
-        fy = self.vy * dt + 0.5 * ( ((force*math.cos( math.rad(angle) )) / mass ) - (GY) ) * math.pow(dt, 2)
+        fx = self.vx * ( force * math.sin(math.rad(angle)) / mass) * math.pow(dt, 2)
+        fy = self.vy * ( force * math.cos(math.rad(angle)) / mass) * math.pow(dt, 2)
 
         self:getBody():applyForce(fx, fy)
 
