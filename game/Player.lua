@@ -1,4 +1,4 @@
-Ship = require "game/Ship"
+PlayerShip = require "ships/WD1"
 
 -- Player object
 local Player = {}
@@ -26,7 +26,7 @@ function Player:create(world, position)
     setmetatable(obj, self)
 
     -- Create ship entity
-    obj.ship = Ship:create(world, obj)
+    obj.ship = PlayerShip:create(world, obj)
 
     ---
     -- Draw

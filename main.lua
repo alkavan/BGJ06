@@ -1,21 +1,23 @@
+package.path = package.path .. ";game/?.lua"
+
 -- Include game helpers
 require "common"
 require "collusion"
 
 -- Load game common modules
-Queue  = require "game/Queue"
-Object = require "game/Object"
-Entity = require "game/Entity"
+Queue  = require "Queue"
+Object = require "Object"
+Entity = require "Entity"
 
 -- Gui
-GuiFrame = require "game/GuiFrame"
-MainMenu = require "game/MainMenu"
+GuiFrame = require "GuiFrame"
+MainMenu = require "MainMenu"
 
 -- Game specific section
-Stats      = require "game/Stats"
-Planet     = require "game/Planet"
-Player     = require "game/Player"
-AiPlayer   = require "game/AiPlayer"
+Stats    = require "Stats"
+Planet   = require "Planet"
+Player   = require "Player"
+AiPlayer = require "AiPlayer"
 
 -- Hump modules
 Camera = require "hump.camera"
@@ -28,8 +30,8 @@ GX = 0.0
 Game = {}
 
 -- Game properties
-Game.mouse_x    = 0
-Game.mouse_y    = 0
+Game.mx = 0
+Game.my = 0
 Game.to_destory = Queue:create()
 Game.planets    = Queue:create()
 Game.player     = nil
@@ -95,12 +97,12 @@ function love.load()
     Game.world:setCallbacks(beginContact, endContact, preSolve, postSolve)
 
     -- Create player entity
-    local player = Player:create(Game.world)
+    local player = Player:create(Game.world, {x = 0, y = 0}, "WD1")
     local px, py = player:getPosition()
     Game.cam = Camera(px, py)
     Game.player = player
 
-    local ai_layer = AiPlayer:create(Game.world, {x = px - 100, y = py - 100})
+    local ai_layer = AiPlayer:create(Game.world, {x = px - 100, y = py - 100}, "AI1")
     Game.ai_player = ai_layer
 
     -- Create planets
@@ -141,11 +143,11 @@ function love.draw()
     Game.cam:detach()
 
     -- Print mouse info line
-    love.graphics.print("MOUSE -> ("..round(mx, 0)..","..round(my, 0)..") | GAME -> ("..Game.mouse_x..","..Game.mouse_y..")", 10, 10)
+    love.graphics.print("MOUSE -> ("..round(mx, 0)..","..round(my, 0)..") | GAME -> ("..Game.mx..","..Game.my..")", 10, 10)
 
     -- Print comera info line
     local cx, cy = Game.cam:worldCoords(love.mouse.getPosition())
-    love.graphics.print("CAMERA -> W("..round(cx, 0)..","..round(cy, 0)..") | ("..Game.mouse_x..","..Game.mouse_y..")", 10, 22)
+    love.graphics.print("CAMERA -> W("..round(cx, 0)..","..round(cy, 0)..") | ("..Game.mx..","..Game.my..")", 10, 22)
 
     -- Draw stats
     Stats:draw({Game.player, Game.ai_player})
@@ -175,6 +177,11 @@ function love.update(dt)
     local dy = Game.player.position.y - Game.cam.y
 
     Game.cam:move(dx/2, dy/2)
+
+    if love.mouse.isDown(1) then
+        Game.player.ship.weapon:aim(Game.mx, Game.my)
+        Game.player.ship.weapon:fire()
+    end
 end
 
 ---
@@ -185,18 +192,16 @@ end
 -- @param istouch
 --
 function love.mousepressed(x, y, button, istouch)
-    Game.player.ship.weapon:aim(x, y)
+    Game.mx = x
+    Game.my = y
 
     -- Left mouse button press
     if button == 1 then
         -- Fire
-        Game.player.ship.weapon:fire()
+--        Game.player.ship.weapon:fire()
     elseif button == 2 then
         -- Other action
     end
-
-    Game.mouse_x = x
-    Game.mouse_y = y
 end
 
 ---

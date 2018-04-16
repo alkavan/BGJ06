@@ -1,4 +1,4 @@
-Ship = require "game/Ship"
+Ship = require "ships/AI1"
 
 -- Player object
 local AiPlayer = {}
@@ -23,10 +23,10 @@ function AiPlayer:create(world, position)
         ship          = nil,
     })
 
+    setmetatable(obj, self)
+
     -- Create ship entity
     obj.ship = Ship:create(world, obj)
-
-    setmetatable(obj, self)
 
     ---
     -- Draw

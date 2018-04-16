@@ -1,9 +1,13 @@
-Explosion = require "game/Explosion"
+Explosion = require "Explosion"
 
 -- Projectile
 local Projectile = {}
 Projectile.__index = Projectile;
 
+---
+-- Create new weapon projectile object
+-- @param weapon
+--
 function Projectile:create(weapon)
     local world = weapon.ship:getBody():getWorld();
 

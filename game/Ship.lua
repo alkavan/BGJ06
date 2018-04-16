@@ -1,4 +1,4 @@
-Weapon = require "game/Weapon"
+Weapon = require "Weapon"
 
 -- Ship object
 local Ship = {}
@@ -35,15 +35,6 @@ function Ship:create(world, player)
 
     obj.fixture = fixture
     obj:getBody():setFixedRotation(true)
-
-    -- Load ship image
-    obj.image  = love.graphics.newImage("asset/ship1.png")
-
-    -- Create animation properties
-    obj.sprite = newAnimation(obj.image, 32, 32, 3.0)
-
-    -- Ship weapon
-    obj.weapon = Weapon:create(16, obj)
 
     ---
     -- Draw

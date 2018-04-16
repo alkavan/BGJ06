@@ -1,4 +1,3 @@
-
 -- MainMenu object
 local MenuMenu = {}
 MenuMenu.__index = MenuMenu
