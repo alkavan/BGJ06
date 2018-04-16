@@ -20,9 +20,9 @@ AiPlayer   = require "game/AiPlayer"
 -- Hump modules
 Camera = require "hump.camera"
 
--- World constants { GM = gravity, GM = game multiplier }
-GY = 0
-GX = 0
+-- World constants { GV = vertical gravity, GX = horisontal gravity }
+GY = 0.0
+GX = 0.0
 
 -- Create game object
 Game = {}
@@ -38,6 +38,14 @@ Game.mmenu      = nil
 Game.cam        = nil
 Game.music      = nil
 
+-- Level object that contains groups of objects in level
+Game.level = {
+    boundary = nil
+}
+
+---
+-- Create planets in level
+--
 function Game:createPlanets()
     -- Create planets
     Game.planets:push(Planet:create(Game.world, colorRed(),    { x = 0,    y = -400 }, Planet.TYPE_RED))
@@ -69,7 +77,6 @@ end
 -- Handles loading of all resources, setup world and objects
 --
 function love.load()
-
     -- Audio
     local music = love.audio.newSource("asset/audio/lazerhawk-lnterstellar-EWHaG_uCvEA.mp3", "static")
 --    music:play() -- TODO: fix music
@@ -84,7 +91,7 @@ function love.load()
     Game.mmenu = MainMenu:create(300,300,300,200,3)
 
     -- Create game world
-    Game.world = love.physics.newWorld(GX, GY, true)
+    Game.world = love.physics.newWorld(GX, GY, false)
     Game.world:setCallbacks(beginContact, endContact, preSolve, postSolve)
 
     -- Create player entity
@@ -106,7 +113,6 @@ end
 -- Main draw function
 --
 function love.draw()
-
     -- Attach camera
     Game.cam:attach()
 
@@ -137,7 +143,7 @@ function love.draw()
     -- Print mouse info line
     love.graphics.print("MOUSE -> ("..round(mx, 0)..","..round(my, 0)..") | GAME -> ("..Game.mouse_x..","..Game.mouse_y..")", 10, 10)
 
-
+    -- Print comera info line
     local cx, cy = Game.cam:worldCoords(love.mouse.getPosition())
     love.graphics.print("CAMERA -> W("..round(cx, 0)..","..round(cy, 0)..") | ("..Game.mouse_x..","..Game.mouse_y..")", 10, 22)
 

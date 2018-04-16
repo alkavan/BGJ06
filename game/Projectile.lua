@@ -11,8 +11,8 @@ function Projectile:create(weapon)
         name     = "Projectile",
         weapon   = weapon,
         speed    = 1,
-        vx       = 100,
-        vy       = 100,
+        vx       = 200,
+        vy       = 200,
         collided = false
     })
 
@@ -27,8 +27,9 @@ function Projectile:create(weapon)
     local catagory   = weapon.ship.player.category
     local p_catagory = weapon.ship.player.category-10
 
-    print(weapon.angle)
+--    print('PROJ_DEG: ', weapon.deg)
     body:setAngle(weapon.angle)
+    body:setBullet(true)
 
     fixture:setUserData(obj)
     fixture:setCategory(catagory)
@@ -66,22 +67,15 @@ function Projectile:create(weapon)
 
         self:setPosition(bx, by)
 
-        -- TODO: use this for draw
---        local dist_from_gun = distance(
---            bx, by,
---            self.weapon.ship:getBody():getX(), self.weapon.ship:getBody():getY()
---        )
-
-        local angle = self:getBody():getAngle()
+        local angle = self:getBody():getAngle() - math.pi / 2
         local force = self.weapon.power
 
-        local fx, fy
         local x, y, mass, inertia = self.fixture:getMassData()
---        print(angle, force, x, y, mass, inertia)
 
-        fx = self.vx * ( force * math.sin(math.rad(angle)) / mass) * math.pow(dt, 2)
-        fy = self.vy * ( force * math.cos(math.rad(angle)) / mass) * math.pow(dt, 2)
+        local fx = self.vx * ( force * math.cos(angle) / mass) * math.pow(dt, 2)
+        local fy = self.vy * ( force * math.sin(angle) / mass) * math.pow(dt, 2)
 
+        -- Apply force on projectile body
         self:getBody():applyForce(fx, fy)
 
         -- Update entity animation
