@@ -107,8 +107,10 @@ function love.load()
 
     -- Create planets
     Game.createPlanets()
-       
+
     love.keyboard.setKeyRepeat(true)
+
+    love.filesystem.setIdentity("beware-space")
 end
 
 ---
@@ -182,6 +184,9 @@ function love.update(dt)
         Game.player.ship.weapon:aim(Game.mx, Game.my)
         Game.player.ship.weapon:fire()
     end
+
+    -- Save screen shot
+--    love.graphics.captureScreenshot(os.time().. '_' .. dt .. ".png")
 end
 
 ---
